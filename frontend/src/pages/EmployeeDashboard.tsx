@@ -112,43 +112,47 @@ export default function EmployeeDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-300 pb-8">
         <h1 className="text-4xl sm:text-5xl">Hi, {firstName}!</h1>
         <p className="text-sm font-medium text-muted">{dateFormat.format(now)}</p>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-3">
-        <div className="space-y-5">
-          <section className="card">
-            <p className="text-sm font-medium text-muted">Waktu sekarang (WIB)</p>
-            <p className="mt-2 text-6xl font-light tracking-tighter tabular-nums">
+        <div className="space-y-5 flex flex-col justify-between">
+          <div className="flex mt-2 md:mt-4 justify-center lg:justify-start items-center">
+            {hasToday === null && (
+              <span className="badge bg-soft text-muted text-6xl lg:text-2xl">Memeriksa...</span>
+            )}
+            {hasToday === true && (
+              <span className="badge badge-mint text-6xl lg:text-2xl">Sudah absen hari ini</span>
+            )}
+            {hasToday === false && (
+              <span className="badge badge-sun text-6xl lg:text-2xl">Belum absen</span>
+            )}
+          </div>
+
+          <section>
+            <p className="mt-2 md:mt-8 text-8xl font-medium tracking-tighter tabular-nums">
               {timeFormat.format(now)}
             </p>
-            <div className="mt-4">
-              {hasToday === null && (
-                <span className="badge bg-soft text-muted">Memeriksa...</span>
-              )}
-              {hasToday === true && (
-                <span className="badge badge-mint">Sudah absen hari ini</span>
-              )}
-              {hasToday === false && (
-                <span className="badge badge-sun">Belum absen</span>
-              )}
-            </div>
+            <p className="text-xl font-medium text-center md:text-left">Waktu sekarang (WIB)</p>
           </section>
 
-          <section className="rounded-card bg-sun p-6 shadow-card">
-            <span className="badge badge-iris">Statistik</span>
+          <section className="mt-2 md:mt-8 rounded-card bg-sun p-6">
+            <div className="flex justify-between items-center">
+              <span className="text-2xl font-medium">Aktivitas</span>
+              <span className="badge badge-iris font-light">Statistik</span>
+            </div>
             <p className="mt-4 text-5xl font-semibold tracking-tighter">
-              {history?.total ?? 0}
+              {history?.total ?? 0} hari
             </p>
-            <p className="text-sm font-medium">Total kehadiran</p>
+            <p className="text-md text-muted font-medium">Total kehadiran</p>
           </section>
         </div>
 
-        <section className="card lg:col-span-2">
+        <section className="card lg:col-span-2 mt-2 md:mt-4">
           <h2 className="text-2xl">Absen WFH</h2>
-          <p className="mb-5 mt-1 text-sm text-muted">
+          <p className="mb-5 mt-1 text-sm text-muted border-b border-stone-300 pb-4">
             Unggah foto sebagai bukti kamu sedang bekerja dari rumah.
           </p>
 
@@ -195,7 +199,7 @@ export default function EmployeeDashboard() {
       </div>
 
       <section className="card">
-        <h2 className="mb-4 text-2xl">Riwayat Absen</h2>
+        <h2 className="mb-4 text-2xl border-b border-stone-300 pb-4">Riwayat Absen</h2>
 
         {loadError && (
           <p className="text-sm font-medium text-danger">{loadError}</p>
