@@ -4,12 +4,75 @@ services:
     container_name: dexa-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      # setelah init.sql selesai
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  auth-service:
+    build: ./auth-service
+    container_name: dexa-auth-service
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PORT: 3001
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      DB_NAME: dexa_auth
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret}
+      JWT_EXPIRES_IN: 1d
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@dexa.test}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin123!}
+    ports:
+      - "3001:3001"
+
+  attendance-service:
+    build: ./attendance-service
+    container_name: dexa-attendance-service
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PORT: 3002
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      DB_NAME: dexa_attendance
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret}
+      UPLOAD_DIR: uploads
+    ports:
+      - "3002:3002"
+    volumes:
+      - uploads_data:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_AUTH_URL: http://localhost:3001
+        VITE_ATTENDANCE_URL: http://localhost:3002
+    container_name: dexa-frontend
+    restart: unless-stopped
+    depends_on:
+      - auth-service
+      - attendance-service
+    ports:
+      - "8080:80"
 
 volumes:
   mysql_data:
+  uploads_data:
