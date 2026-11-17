@@ -6,8 +6,8 @@ export default function Layout() {
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-16 pt-4 sm:px-6">
-      <header className="mb-8 flex items-center justify-between rounded-full bg-surface px-4 py-2.5 shadow-card sm:px-6">
+    <div className="mx-auto max-w-7xl px-4 pb-16 pt-4 sm:px-6">
+      <header className="mb-8 flex items-center justify-between rounded-full bg-surface px-3 py-2 sm:px-6">
         <div className="flex items-center gap-2.5">
           <span className="grid size-9 place-items-center rounded-full bg-ink text-sm font-extrabold text-white">
             D

@@ -29,7 +29,6 @@
   body {
     @apply min-h-screen bg-canvas font-sans text-ink antialiased;
     background-image:
-      radial-gradient(70rem 40rem at 10% -10%, #fbf4f0 0%, transparent 60%),
       linear-gradient(180deg, #f3eae5 0%, #e9d8cd 55%, #d5baa9 100%);
     background-attachment: fixed;
   }
